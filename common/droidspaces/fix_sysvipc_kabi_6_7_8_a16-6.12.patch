@@ -1,0 +1,44 @@
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index da3984c..9fd9d38 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1192,8 +1192,8 @@ struct task_struct {
+ 	struct nameidata		*nameidata;
+ 
+ #ifdef CONFIG_SYSVIPC
+-	struct sysv_sem			sysvsem;
+-	struct sysv_shm			sysvshm;
++	// struct sysv_sem			sysvsem;
++	// struct sysv_shm			sysvshm;
+ #endif
+ #ifdef CONFIG_DETECT_HUNG_TASK
+ 	unsigned long			last_switch_count;
+@@ -1655,9 +1655,28 @@ struct task_struct {
+ 	ANDROID_KABI_RESERVE(3);
+ 	ANDROID_KABI_RESERVE(4);
+ 	ANDROID_KABI_RESERVE(5);
++
++#ifdef CONFIG_SYSVIPC
++    union {
++        struct {
++            ANDROID_KABI_RESERVE(6);
++        };
++        struct sysv_sem sysvsem;
++        _ANDROID_KABI_NORMAL_SIZE_ALIGN(ANDROID_KABI_RESERVE(6), struct sysv_sem);
++    };
++    union {
++        struct {
++            ANDROID_KABI_RESERVE(7);
++            ANDROID_KABI_RESERVE(8);
++        };
++        struct sysv_shm sysvshm;
++        _ANDROID_KABI_NORMAL_SIZE_ALIGN(ANDROID_KABI_RESERVE(7); ANDROID_KABI_RESERVE(8), struct sysv_shm);
++    };
++#else
+ 	ANDROID_KABI_RESERVE(6);
+ 	ANDROID_KABI_RESERVE(7);
+ 	ANDROID_KABI_RESERVE(8);
++#endif
+ 
+ #ifdef CONFIG_RV
+ 	/*
