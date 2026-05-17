@@ -376,6 +376,19 @@ index 219d3ebd4..d1c830b89 100644
  	ksu_feature_exit();
  
  	if (ksu_cred) {
+diff --git a/kernel/extras.c b/kernel/extras.c
+index 0cb3ffd02..601873b21 100644
+--- a/kernel/extras.c
++++ b/kernel/extras.c
+@@ -22,7 +22,7 @@ static atomic_t disable_spoof = ATOMIC_INIT(1);
+ void ksu_avc_spoof_enable();
+ void ksu_avc_spoof_disable();
+ 
+-static bool ksu_avc_spoof_enabled = true;
++bool ksu_avc_spoof_enabled = true;
+ static bool boot_completed = false;
+ 
+ static int avc_spoof_feature_get(u64 *value)
 diff --git a/kernel/feature/kernel_umount.c b/kernel/feature/kernel_umount.c
 index 3a48d8ceb..5956083a3 100644
 --- a/kernel/feature/kernel_umount.c
@@ -5721,19 +5734,20 @@ index 08488da68..48c0fd264 100644
 +
  #endif
 diff --git a/kernel/supercall/dispatch.c b/kernel/supercall/dispatch.c
-index e1801e83c..bcde2bc6c 100644
+index e1801e83c..9cdb2ecb0 100644
 --- a/kernel/supercall/dispatch.c
 +++ b/kernel/supercall/dispatch.c
-@@ -4,6 +4,8 @@
+@@ -4,6 +4,9 @@
  #include <linux/string.h>
  #include <linux/uaccess.h>
  #include <linux/version.h>
 +#include <linux/namei.h>
 +#include <linux/susfs.h>
++#include <linux/utsname.h>
  
  #include "uapi/supercall.h"
  #include "supercall/internal.h"
-@@ -17,7 +19,6 @@
+@@ -17,7 +20,6 @@
  #include "manager/manager_identity.h"
  #include "selinux/selinux.h"
  #include "infra/file_wrapper.h"
@@ -5741,7 +5755,7 @@ index e1801e83c..bcde2bc6c 100644
  #include "policy/app_profile.h"
  #include "supercall/supercall.h"
  
-@@ -25,479 +26,545 @@
+@@ -25,479 +27,545 @@
  
  static int do_grant_root(void __user *arg)
  {
@@ -6617,7 +6631,7 @@ index e1801e83c..bcde2bc6c 100644
  }
  
  struct list_head mount_list = LIST_HEAD_INIT(mount_list);
-@@ -505,417 +572,419 @@ DECLARE_RWSEM(mount_list_lock);
+@@ -505,417 +573,419 @@ DECLARE_RWSEM(mount_list_lock);
  
  static int add_try_umount(void __user *arg)
  {
